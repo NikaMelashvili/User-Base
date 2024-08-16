@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "user")
 @Builder
-public class User implements UserDetails {
+public class User extends AppEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +27,10 @@ public class User implements UserDetails {
 
     @Column(name = "password")
     private String password;
+
+    @Lob
+    @Column(name = "profile_pic", columnDefinition = "LONGBLOB")
+    private byte[] image;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

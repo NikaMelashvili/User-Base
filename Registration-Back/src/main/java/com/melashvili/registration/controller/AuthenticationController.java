@@ -7,12 +7,12 @@ import com.melashvili.registration.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
+import javax.security.auth.login.AccountException;
+import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 
 @RestController
 @RequestMapping("/rest/authentication")
@@ -26,8 +26,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
-        return new ResponseEntity<>(service.register(request), HttpStatus.OK);
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request)
+            throws IOException, AccountException {
+        return new ResponseEntity<>(service.register(request), HttpStatus.CREATED);
     }
 
     @PostMapping("/authenticate")
