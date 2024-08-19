@@ -3,10 +3,10 @@ import { LoginComponent } from '../login/login.component';
 import { SignUpComponent } from '../sign-up/sign-up.component';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { NavigationComponent } from "../navigation/navigation.component";
+import { ProfileComponent } from '../profile/profile.component';
 
 @Component({
-  selector: 'app-landing-page',
+  selector: 'app-navigation',
   standalone: true,
   imports: [
     LoginComponent,
@@ -14,9 +14,12 @@ import { NavigationComponent } from "../navigation/navigation.component";
     CommonModule,
     RouterOutlet,
     RouterLink,
-    NavigationComponent
-],
-  templateUrl: './landing-page.component.html',
-  styleUrl: './landing-page.component.css',
+    NavigationComponent,
+    ProfileComponent,
+  ],
+  templateUrl: './navigation.component.html',
+  styleUrl: './navigation.component.css',
 })
-export class LandingPageComponent {}
+export class NavigationComponent {
+  userId: number = 0;
+}
