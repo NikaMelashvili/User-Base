@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { SignUp } from './../../common/sign-up';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -6,9 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
-import { SignUp } from '../../common/sign-up';
 
 @Component({
   selector: 'app-sign-up',
@@ -38,6 +37,7 @@ import { SignUp } from '../../common/sign-up';
         <div class="mb-3">
           <label for="formFile" class="form-label">Profile Picture</label>
           <input
+            (change)="onFileChange($event)"
             class="form-control"
             type="file"
             id="formFile"
@@ -58,10 +58,12 @@ import { SignUp } from '../../common/sign-up';
     `,
   ],
   standalone: true,
-  imports: [HttpClientModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
 })
-export class SignUpComponent {
+export class SignUpComponent implements OnInit {
   signUpFormGroup!: FormGroup;
+  base64Image: string | null = null;
+  userSignUp: SignUp | null = null;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -82,19 +84,35 @@ export class SignUpComponent {
     });
   }
 
-  signUp() {
-    const user = new SignUp();
-    user.email = this.signUpFormGroup.get('email')?.value;
-    user.password = this.signUpFormGroup.get('password')?.value;
-    user.profileImageBase64 = this.signUpFormGroup.get('profilePicture')?.value;
+  onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
 
-    this.authService.userRegister(user).subscribe(
-      (response) => {
-        console.log('Registration successful', response.token);
-      },
-      (error) => {
-        console.error('Registration failed', error);
-      }
-    );
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        let result = reader.result as string;
+        this.base64Image = result.split(',')[1];
+      };
+
+      reader.readAsDataURL(file);
+    }
+  }
+
+  signUp(): void {
+    if (this.signUpFormGroup.valid && this.base64Image) {
+      const { email, password } = this.signUpFormGroup.value;
+      this.userSignUp = new SignUp(email, password, this.base64Image);
+
+      this.authService.userRegister(this.userSignUp).subscribe({
+        next: (response) => {
+          console.log('Registration successful, token:', response.token);
+        },
+        error: (error) => {
+          console.error('Registration failed:', error);
+        },
+      });
+    }
   }
 }

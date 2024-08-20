@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { SignUp } from '../common/sign-up';
 import { Observable } from 'rxjs';
 
@@ -7,11 +7,11 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class AuthService {
-  private singUpUrl = 'http://127.0.0.1:8080/rest/authentication/register';
+  private signUpUrl = 'http://127.0.0.1:8080/rest/authentication/register';
 
   constructor(private http: HttpClient) {}
 
   userRegister(user: SignUp): Observable<{ token: string }> {
-    return this.http.post<{ token: string }>(this.singUpUrl, user);
+    return this.http.post<{ token: string }>(this.signUpUrl, user);
   }
 }
