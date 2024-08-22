@@ -108,6 +108,7 @@ export class SignUpComponent implements OnInit {
       this.authService.userRegister(this.userSignUp).subscribe({
         next: (response) => {
           console.log('Registration successful, token:', response.token);
+          this.signUpFormGroup.reset();
         },
         error: (error) => {
           console.error('Registration failed:', error);

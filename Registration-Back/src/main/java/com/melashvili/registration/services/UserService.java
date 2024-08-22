@@ -23,9 +23,20 @@ public class UserService {
 
         userResponseDTO.setId(user.getId());
         userResponseDTO.setEmail(user.getEmail());
-        userResponseDTO.setProfilePicture(user.getImage());
+        userResponseDTO.setProfilePicture(user.getImage().toString());
 
         return userResponseDTO;
     }
 
+    public UserResponseDTO getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+
+        UserResponseDTO userResponseDTO = new UserResponseDTO();
+
+        userResponseDTO.setId(user.getId());
+        userResponseDTO.setEmail(user.getEmail());
+        userResponseDTO.setProfilePicture(user.getImage().toString());
+
+        return userResponseDTO;
+    }
 }

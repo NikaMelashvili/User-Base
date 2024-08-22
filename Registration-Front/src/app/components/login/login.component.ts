@@ -15,7 +15,7 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
-    <div class="container-sign-up">
+    <div class="container-login">
       <form [formGroup]="loginFormGroup" (ngSubmit)="login()">
         <div class="mb-3">
           <label for="email" class="form-label">Email address</label>
@@ -82,6 +82,7 @@ export class LoginComponent implements OnInit {
       this.authService.userLogin(this.userLogin).subscribe({
         next: (response) => {
           console.log('Login successful, token:', response.token);
+          this.loginFormGroup.reset();
         },
         error: (error) => {
           console.error('Login failed:', error);
