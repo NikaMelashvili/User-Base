@@ -14,7 +14,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
 import javax.security.auth.login.AccountException;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.util.Base64;
@@ -47,13 +51,28 @@ public class AuthenticationService {
         var user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .image(Base64.getDecoder().decode(request.getImageBase64()))
+                .image(convertImageToPng(Base64.getDecoder().decode(request.getImageBase64())))
                 .build();
         userRepository.save(user);
         var token = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(token)
                 .build();
+    }
+
+    private byte[] convertImageToPng(byte[] imageBytes) {
+        try {
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes);
+            BufferedImage originalImage = ImageIO.read(inputStream);
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(originalImage, "png", outputStream);
+
+            return outputStream.toByteArray();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {

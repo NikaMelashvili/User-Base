@@ -7,7 +7,7 @@ import { RouterOutlet, RouterLink } from '@angular/router';
   standalone: true,
   imports: [RouterOutlet, RouterLink, LandingPageComponent],
   template: `
-    <div class="container">
+    <div class="container-fluid p-0">
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">UserBase</a>
