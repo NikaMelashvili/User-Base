@@ -6,6 +6,7 @@ import com.melashvili.registration.model.dto.response.AuthenticationResponse;
 import com.melashvili.registration.model.entities.User;
 import com.melashvili.registration.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import java.time.Duration;
 import java.util.Base64;
 
 @Service
@@ -57,6 +59,7 @@ public class AuthenticationService {
         var token = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(token)
+                .cookie(createAuthTokenCookie(token))
                 .build();
     }
 
@@ -89,6 +92,18 @@ public class AuthenticationService {
 
         return AuthenticationResponse.builder()
                 .token(token)
+                .cookie(createAuthTokenCookie(token))
                 .build();
+    }
+
+    public String createAuthTokenCookie(String token) {
+        ResponseCookie cookie = ResponseCookie.from("authToken", token)
+                .httpOnly(true) // to prevent javascript access
+                .secure(false)   // use true if your site uses https
+                .path("/")      // cookie available for all paths
+                .maxAge(Duration.ofDays(1)) // cookie expiration time
+                .sameSite("Strict") // to prevent csrf
+                .build();
+        return cookie.toString();
     }
 }

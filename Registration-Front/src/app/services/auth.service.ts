@@ -15,7 +15,7 @@ export class AuthService {
 
   private baseUrlProfile = 'http://127.0.0.1:8080/rest/profile';
 
-  private currentUserEmail: string = '';
+  public currentUserEmail: string = '';
 
   userProfile: UserResponseDTO = new UserResponseDTO();
 
@@ -23,19 +23,24 @@ export class AuthService {
 
   userRegister(user: SignUp): Observable<{ token: string }> {
     this.currentUserEmail = user.email;
-    console.log(this.currentUserEmail);
-    return this.http.post<{ token: string }>(this.signUpUrl, user);
+    return this.http.post<{ token: string }>(this.signUpUrl, user, {
+      withCredentials: true,
+    });
   }
 
   userLogin(user: Login): Observable<{ token: string }> {
     this.currentUserEmail = user.email;
-    console.log(this.currentUserEmail);
-    return this.http.post<{ token: string }>(this.loginUrl, user);
+    return this.http.post<{ token: string }>(this.loginUrl, user, {
+      withCredentials: true,
+    });
   }
 
   loadUserProfile(email: string): Observable<UserResponseDTO> {
     return this.http.get<UserResponseDTO>(
-      `${this.baseUrlProfile}/email=${this.currentUserEmail}`
+      `${this.baseUrlProfile}/byEmail?email=${this.currentUserEmail}`,
+      {
+        withCredentials: true,
+      }
     );
   }
 }
