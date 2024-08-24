@@ -6,6 +6,8 @@ import com.melashvili.registration.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
+
 @Service
 public class UserService {
 
@@ -35,7 +37,7 @@ public class UserService {
 
         userResponseDTO.setId(user.getId());
         userResponseDTO.setEmail(user.getEmail());
-        userResponseDTO.setProfilePicture(user.getImage().toString());
+        userResponseDTO.setProfilePicture(Base64.getEncoder().encodeToString(user.getImage()));
 
         return userResponseDTO;
     }
