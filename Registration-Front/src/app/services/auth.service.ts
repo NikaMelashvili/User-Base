@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { SignUp } from '../common/sign-up';
 import { Observable } from 'rxjs';
 import { Login } from '../common/login';
 import { UserResponseDTO } from '../common/user-response-dto';
+import { getTokenFromCookie } from '../utils/cookie';
 
 @Injectable({
   providedIn: 'root',
@@ -36,11 +37,20 @@ export class AuthService {
   }
 
   loadUserProfile(email: string): Observable<UserResponseDTO> {
+    const token: string = getTokenFromCookie() ?? '';
+    const headers = this.attachTokenToHeaders(token);
     return this.http.get<UserResponseDTO>(
       `${this.baseUrlProfile}/byEmail?email=${this.currentUserEmail}`,
       {
+        headers,
         withCredentials: true,
       }
     );
+  }
+
+  attachTokenToHeaders(token: string): HttpHeaders {
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
   }
 }
