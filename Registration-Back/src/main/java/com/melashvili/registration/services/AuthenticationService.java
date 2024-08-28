@@ -98,11 +98,11 @@ public class AuthenticationService {
 
     public String createAuthTokenCookie(String token) {
         ResponseCookie cookie = ResponseCookie.from("authToken", token)
-                .httpOnly(true) // to prevent javascript access
-                .secure(false)   // use true if your site uses https
-                .path("/")      // cookie available for all paths
-                .maxAge(Duration.ofDays(1)) // cookie expiration time
-                .sameSite("Strict") // to prevent csrf
+                .httpOnly(false)
+                .secure(false)
+                .path("/")
+                .maxAge(Duration.ofDays(1))
+                .sameSite("Strict")
                 .build();
         return cookie.toString();
     }

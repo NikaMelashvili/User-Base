@@ -1,6 +1,7 @@
 package com.melashvili.registration.controller;
 
 import com.melashvili.registration.model.dto.response.UserResponseDTO;
+import com.melashvili.registration.services.JwtService;
 import com.melashvili.registration.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,9 +14,16 @@ public class ProfileController {
 
     private UserService userService;
 
+    private JwtService jwtService;
+
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    @Autowired
+    public void setJwtService(JwtService jwtService) {
+        this.jwtService = jwtService;
     }
 
     @GetMapping("/{id}")
@@ -25,7 +33,16 @@ public class ProfileController {
     }
 
     @GetMapping("/byEmail")
-    public ResponseEntity<UserResponseDTO> getProfileByEmail(@RequestParam String email) {
+    public ResponseEntity<UserResponseDTO> getProfileByEmail(
+            @RequestParam String email,
+            @RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.substring(7);
+
+        if (!jwtService.validateToken(token)){
+            return ResponseEntity.status(401).build();
+        }
+
         UserResponseDTO user = userService.getUserByEmail(email);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
