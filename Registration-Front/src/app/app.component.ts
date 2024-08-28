@@ -33,10 +33,10 @@ import { RouterOutlet, RouterLink } from '@angular/router';
                 >
               </li>
             </ul>
-            <ul class="navbar-nav">
-              <li class="nav-item ms-auto profile-btn">
+            <ul class="navbar-nav ms-auto ms-lg-0">
+              <li class="nav-item profile-btn">
                 <button
-                  class="btn btn-outline-success me-2"
+                  class="btn btn-outline-success me-2 ms-lg-auto"
                   type="button"
                   [routerLink]="['/profile', userId]"
                 >

@@ -9,16 +9,34 @@ import { getTokenFromCookie } from '../../utils/cookie';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div *ngIf="user">
-      <h2>User profile</h2>
-      <h2>{{ user.email }}</h2>
-      <img
-        [src]="'data:image/png;base64,' + user.profilePicture"
-        alt="Profile Picture"
-      />
+    <div *ngIf="user" class="container mt-4">
+      <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+          <h2 class="mb-4">User Profile</h2>
+          <div class="profile-picture-container mb-3">
+            <img
+              [src]="'data:image/png;base64,' + user.profilePicture"
+              alt="Profile Picture"
+              class="rounded-circle"
+            />
+          </div>
+          <h4>{{ user.email }}</h4>
+        </div>
+      </div>
     </div>
   `,
-  styles: [``],
+  styles: [
+    `
+      .profile-picture-container img {
+        width: 140px;
+        height: 140px;
+        object-fit: cover;
+        border: 2px solid #007bff;
+        padding: 4px;
+        background-color: white;
+      }
+    `,
+  ],
 })
 export class ProfileComponent implements OnInit {
   user!: UserResponseDTO;

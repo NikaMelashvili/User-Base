@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { SignUp } from '../common/sign-up';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { Login } from '../common/login';
 import { UserResponseDTO } from '../common/user-response-dto';
 import { getTokenFromCookie } from '../utils/cookie';
@@ -10,11 +10,11 @@ import { getTokenFromCookie } from '../utils/cookie';
   providedIn: 'root',
 })
 export class AuthService {
-  private baseUrlAuth = 'http://127.0.0.1:8080/rest/authentication';
+  private baseUrlAuth = 'http://localhost:8080/rest/authentication';
+  private baseUrlProfile = 'http://localhost:8080/rest/profile';
+
   private signUpUrl = this.baseUrlAuth + '/register';
   private loginUrl = this.baseUrlAuth + '/authenticate';
-
-  private baseUrlProfile = 'http://127.0.0.1:8080/rest/profile';
 
   public currentUserEmail: string = '';
 
@@ -38,7 +38,13 @@ export class AuthService {
 
   loadUserProfile(email: string): Observable<UserResponseDTO> {
     const token: string = getTokenFromCookie() ?? '';
+    if (!token) {
+      console.error('No token found in cookies');
+      throw new Error('No token found in cookies');
+    }
+
     const headers = this.attachTokenToHeaders(token);
+
     return this.http.get<UserResponseDTO>(
       `${this.baseUrlProfile}/byEmail?email=${this.currentUserEmail}`,
       {
@@ -49,8 +55,8 @@ export class AuthService {
   }
 
   attachTokenToHeaders(token: string): HttpHeaders {
-    return new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
+    let headers = new HttpHeaders();
+    headers = headers.set('Authorization', `Bearer ${token}`);
+    return headers;
   }
 }
